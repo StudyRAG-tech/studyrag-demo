@@ -1,41 +1,44 @@
-<!doctype html>
-<html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>StudyRAG Demo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
-/* Design system «Carta» di StudyRAG (views/theme.css + ui.py): carta e inchiostro di giorno, grafite di notte,
-   un solo accento terracotta. Layout: barra in alto a 5 voci, seconda riga per «Studia», colonna da 1180 px. */
+/* Design system «Campus» di StudyRAG 5.5 (views/theme.css + ui.py TOKENS): barra blu notte, accento teal, card bianche
+   arrotondate, card «Adesso» con il gradiente, un colore per materia, un solo carattere (Manrope). */
 :root {
-  --bg:#F6F1E8; --surface:#FFFCF7; --surface-2:#EFE7DA; --line:#E2D7C6; --line-2:#CDBFAB; --edge:#8F806C;
-  --ink:#2B2621; --muted:#6F665B; --shadow:rgba(70,50,25,.06);
-  --accent:#A9492A; --on-accent:#FFFFFF; --accent-soft:#F5E3D8; --accent-line:#DDB3A0;
-  --ok:#4C7448; --ok-soft:#E6EEDF; --ok-line:#B9CDB1;
-  --warn:#8F570B; --warn-soft:#F6EAD3; --warn-line:#DFC290;
-  --danger:#B0392C; --danger-soft:#F6E0DC; --danger-line:#E0AFA8;
-  --blue:#4D6A8A; --overlay:rgba(43,38,33,.38);
-  --f-head:Fraunces, Georgia, "Times New Roman", serif;
-  --f-body:Lato, -apple-system, "Segoe UI", sans-serif;
-  --r:14px; --r-sm:10px; --ease:cubic-bezier(.25,.46,.45,.94);
+  --bg:#F2F5F9; --surface:#FFFFFF; --surface-2:#E9EEF5; --line:#DCE3EC; --line-2:#C3CEDB; --edge:#7A889C;
+  --ink:#0F1B2D; --muted:#536379; --shadow:rgba(15,27,45,.07);
+  --accent:#0F766E; --on-accent:#FFFFFF; --accent-soft:#DDF3F0; --accent-line:#9ED8D0;
+  --ok:#15703A; --ok-soft:#DCFCE7; --ok-line:#A7E3BC;
+  --warn:#A44A08; --warn-soft:#FEF3C7; --warn-line:#F2D28B;
+  --danger:#BE123C; --danger-soft:#FFE4E8; --danger-line:#F5B5C2;
+  --blue:#4F46E5; --overlay:rgba(15,27,45,.45);
+  --nav:#0F1B2D; --nav-ink:#AEBBCD; --nav-line:#24324A; --nav-active:#2DD4BF; --nav-active-2:#38BDF8; --nav-on-active:#042F2B;
+  --grad-a:#0F766E; --grad-b:#0369A1;
+  --subj-0:#4F46E5; --subj-1:#D97706; --subj-2:#DB2777; --subj-3:#0284C7; --subj-4:#7C3AED; --subj-5:#059669; --subj-6:#EA580C; --subj-7:#E11D48;
+  --f-head:Manrope, -apple-system, "Segoe UI", sans-serif;
+  --f-body:Manrope, -apple-system, "Segoe UI", sans-serif;
+  --r:18px; --r-sm:12px; --ease:cubic-bezier(.25,.46,.45,.94);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg:#1B1A18; --surface:#282622; --surface-2:#312F2B; --line:#45413C; --line-2:#57524B; --edge:#857C70;
-  --ink:#EEE8DF; --muted:#ABA294; --shadow:rgba(0,0,0,0);
-  --accent:#E08A62; --on-accent:#1B1A18; --accent-soft:#3A2A22; --accent-line:#6E4634;
-  --ok:#9CC090; --ok-soft:#26301F; --ok-line:#435638; --warn:#E3AE5A; --warn-soft:#33291A; --warn-line:#5E4A26;
-  --danger:#EE8A7C; --danger-soft:#3A2320; --danger-line:#6A3A33; --blue:#93AECB; --overlay:rgba(0,0,0,.55);
+  --bg:#0B1220; --surface:#131C2E; --surface-2:#1B2639; --line:#26334A; --line-2:#34445E; --edge:#6E7F99;
+  --ink:#E6EDF7; --muted:#97A6BB; --shadow:rgba(0,0,0,.25);
+  --accent:#2DD4BF; --on-accent:#042F2B; --accent-soft:#0F2E2E; --accent-line:#1F5F59;
+  --ok:#4ADE80; --ok-soft:#0F2A1B; --ok-line:#1E5133; --warn:#FBBF24; --warn-soft:#2D2310; --warn-line:#5C4614;
+  --danger:#FB7185; --danger-soft:#33141C; --danger-line:#6B2535; --blue:#A5B4FC; --overlay:rgba(0,0,0,.6);
+  --nav:#131C2E; --nav-line:#26334A;
+  --subj-0:#818CF8; --subj-1:#FBBF24; --subj-2:#F472B6; --subj-3:#38BDF8; --subj-4:#A78BFA; --subj-5:#34D399; --subj-6:#FB923C; --subj-7:#FB7185;
   color-scheme:dark; } }
 :root[data-theme="dark"] {
-  --bg:#1B1A18; --surface:#282622; --surface-2:#312F2B; --line:#45413C; --line-2:#57524B; --edge:#857C70;
-  --ink:#EEE8DF; --muted:#ABA294; --shadow:rgba(0,0,0,0);
-  --accent:#E08A62; --on-accent:#1B1A18; --accent-soft:#3A2A22; --accent-line:#6E4634;
-  --ok:#9CC090; --ok-soft:#26301F; --ok-line:#435638; --warn:#E3AE5A; --warn-soft:#33291A; --warn-line:#5E4A26;
-  --danger:#EE8A7C; --danger-soft:#3A2320; --danger-line:#6A3A33; --blue:#93AECB; --overlay:rgba(0,0,0,.55);
+  --bg:#0B1220; --surface:#131C2E; --surface-2:#1B2639; --line:#26334A; --line-2:#34445E; --edge:#6E7F99;
+  --ink:#E6EDF7; --muted:#97A6BB; --shadow:rgba(0,0,0,.25);
+  --accent:#2DD4BF; --on-accent:#042F2B; --accent-soft:#0F2E2E; --accent-line:#1F5F59;
+  --ok:#4ADE80; --ok-soft:#0F2A1B; --ok-line:#1E5133; --warn:#FBBF24; --warn-soft:#2D2310; --warn-line:#5C4614;
+  --danger:#FB7185; --danger-soft:#33141C; --danger-line:#6B2535; --blue:#A5B4FC; --overlay:rgba(0,0,0,.6);
+  --nav:#131C2E; --nav-line:#26334A;
+  --subj-0:#818CF8; --subj-1:#FBBF24; --subj-2:#F472B6; --subj-3:#38BDF8; --subj-4:#A78BFA; --subj-5:#34D399; --subj-6:#FB923C; --subj-7:#FB7185;
   color-scheme:dark;
 }
 *, *::before, *::after { box-sizing:border-box; }
@@ -44,7 +47,7 @@ body { background:var(--bg); color:var(--ink); font:16px/1.55 var(--f-body); -we
 ::selection { background:var(--accent-soft); }
 button, input, select, textarea { font:inherit; color:inherit; }
 :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-h1, h2, h3, h4 { font-family:var(--f-head); font-weight:600; letter-spacing:-.01em; margin:0; text-wrap:balance; }
+h1, h2, h3, h4 { font-family:var(--f-head); font-weight:800; letter-spacing:-.025em; margin:0; text-wrap:balance; }
 p { margin:0; }
 .ico { width:18px; height:18px; flex:none; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .num { font-variant-numeric:tabular-nums; }
@@ -303,9 +306,67 @@ input[type="checkbox"] { accent-color:var(--accent); width:18px; height:18px; }
 .feat { display:grid; gap:.45rem; padding:0; margin:0; list-style:none; }
 .feat li { display:flex; gap:.5rem; align-items:flex-start; }
 .feat li .ico { color:var(--ok); margin-top:.15rem; }
+
+/* ===================== Campus (5.5) ===================== */
+.topbar { background:var(--nav); border:1px solid var(--nav-line); border-radius:18px; padding:.5rem .7rem; margin:.4rem 0 1.4rem;
+  box-shadow:0 8px 24px var(--shadow); }
+.topbar .brand .name { color:#fff; font-weight:800; letter-spacing:-.02em; }
+.brand .mark { width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg, var(--nav-active), var(--nav-active-2));
+  color:#0F1B2D; font-weight:800; box-shadow:0 2px 8px rgba(45,212,191,.35); }
+.topbar .seg { background:rgba(255,255,255,.05); border-color:var(--nav-line); }
+.topbar .seg button { color:var(--nav-ink); }
+.topbar .seg button:hover { color:#fff; background:rgba(255,255,255,.07); }
+.topbar .seg button[aria-pressed="true"] { background:var(--nav-active); color:var(--nav-on-active); box-shadow:none; }
+.topbar .seg button[aria-pressed="true"] .ico { color:var(--nav-on-active); }
+.topbar .iconbtn { color:var(--nav-ink); }
+.topbar .iconbtn:hover { color:#fff; background:rgba(255,255,255,.08); }
+.topbar .iconbtn.on { color:var(--nav-on-active); background:var(--nav-active); border-color:transparent; }
+.topbar .subj { background-color:rgba(255,255,255,.07); border-color:var(--nav-line); color:#fff; }
+.topbar .subj option { color:#0F1B2D; background:#fff; }
+.topbar .jobs { color:var(--nav-ink); }
+.topbar :focus-visible { outline-color:var(--nav-active); }
+.studynav .seg { background:var(--surface); box-shadow:0 1px 2px var(--shadow); }
+.studynav .seg button[aria-pressed="true"] { background:var(--accent-soft); color:var(--accent); box-shadow:none; }
+.demo-strip { background:var(--surface); }
+.eyebrow { font-weight:800; }
+.hero .eyebrow { justify-self:start; background:var(--accent-soft); padding:.22rem .65rem; border-radius:99px; letter-spacing:.07em; font-size:.74rem; }
+.hero h1 { letter-spacing:-.03em; }
+.hero h1 em { font-style:normal; font-weight:800; }
+.card, .stat, .day { border-color:var(--line); box-shadow:0 1px 2px var(--shadow), 0 6px 18px var(--shadow); }
+.card.focus { box-shadow:inset 4px 0 0 var(--accent), 0 1px 2px var(--shadow), 0 6px 18px var(--shadow); }
+.stat .v { font-weight:800; letter-spacing:-.03em; }
+.stat .k .ico { color:var(--accent); }
+.btn.primary { font-weight:800; }
+.btn.primary:hover { transform:translateY(-1px); }
+/* card «Adesso» */
+.card.now { background:linear-gradient(120deg, var(--grad-a), var(--grad-b)); border:0; border-radius:22px; color:#fff; padding:1.6rem 1.7rem 1.4rem;
+  box-shadow:0 14px 34px rgba(3,105,161,.22); position:relative; overflow:hidden; }
+.card.now::before, .card.now::after { content:""; position:absolute; border-radius:50%; background:rgba(255,255,255,.07); pointer-events:none; }
+.card.now::before { right:-60px; top:-110px; width:300px; height:300px; }
+.card.now::after { right:150px; bottom:-120px; width:190px; height:190px; background:rgba(255,255,255,.05); }
+.card.now > * { position:relative; }
+.card.now .eyebrow { display:inline-block; color:#fff; background:rgba(255,255,255,.16); padding:.2rem .6rem; border-radius:99px; letter-spacing:.08em; font-size:.72rem; }
+.card.now h2 { color:#fff; }
+.card.now .muted { color:rgba(255,255,255,.88); }
+.card.now .progress { background:rgba(255,255,255,.25); }
+.card.now .progress i { background:#fff; }
+.card.now .btn { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.7); color:#fff; }
+.card.now .btn:hover { background:rgba(255,255,255,.2); }
+.card.now .btn.primary { background:#fff; border-color:#fff; color:var(--grad-a); }
+.card.now :focus-visible { outline-color:#fff; }
+/* colori delle materie */
+.sdot { display:inline-flex; align-items:center; gap:.45rem; }
+.sdot::before { content:""; width:.6rem; height:.6rem; border-radius:50%; background:var(--k); flex:none; }
+/* agenda e piano */
+.day.today { box-shadow:inset 0 3px 0 var(--accent), 0 1px 2px var(--shadow), 0 6px 18px var(--shadow); }
+.day.today .dh b { background:var(--accent); color:var(--on-accent); border-radius:10px; padding:0 .45rem; }
+.day .dh b, .pday .date b, .gcard .gv, .sessbar .clock { font-weight:800; }
+.qhead { font-weight:700; }
+/* mappe: radice teal piena */
+.mnode.l0 rect { fill:var(--accent); stroke:var(--accent); }
+.mnode.l0 text { fill:var(--on-accent); }
+.mnode.l0 text, .mnode.l1 text { font-weight:700; }
 </style>
-</head>
-<body>
 
 <div class="demo-strip">
   <div class="in">
@@ -692,6 +753,7 @@ S = load();
 const subjNames = () => Object.keys(S.subjects);
 const cur = () => S.subjects[S.subject] || S.subjects[subjNames()[0]];
 const isSup = () => S.level === "sup";
+const scol = s => `var(--subj-${Math.max(0, subjNames().indexOf(s)) % 8})`;   // colore della materia (come ui.subject_class)
 function applyTheme() {
   const r = document.documentElement;
   if (S.theme === "light" || S.theme === "dark") r.setAttribute("data-theme", S.theme); else r.removeAttribute("data-theme");
@@ -769,8 +831,8 @@ function vOggi() {
   const bySub = {}; tasks.forEach(x => (bySub[x.subject] ||= []).push(x));
   const order = Object.keys(bySub).sort((a,b) => (S.subjects[a].plan.exam).localeCompare(S.subjects[b].plan.exam));
   return hero("Oggi", `${greet}, ${esc(S.name)}.`, meta) + `
-  <div class="card focus">
-    <div class="eyebrow" style="color:var(--muted)">Adesso</div>
+  <div class="card now">
+    <div class="eyebrow">Adesso</div>
     ${nextTask ? `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">${esc(nextTask.subject)} — ${esc(nextTask.title)}</h2>
       <p class="muted">${nextTask.kind === "ripasso" ? "Ripasso" : "Studio"} · ~${nextTask.min} min dal piano di studio${dueCards(nextTask.subject).length ? ` · poi ${dueCards(nextTask.subject).length} flashcard` : ""}</p>`
       : `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">Per oggi hai finito.</h2><p class="muted">Tutte le attività del piano sono spuntate. Puoi ripassare le flashcard o riposarti.</p>`}
@@ -787,12 +849,12 @@ function vOggi() {
   <div class="grid g-side section">
     <div class="stack">
       <div class="card"><h3>${ic("clock")}In agenda oggi</h3>
-        <div class="list" style="margin-top:.4rem">${lez.length + evs.length ? [...lez.map(l => ({time:l.start, k:"lezione", t:l.subject, s:`${l.start}–${l.end}${l.room ? " · " + l.room : ""}${l.teacher ? " · " + l.teacher : ""}`})),
+        <div class="list" style="margin-top:.4rem">${lez.length + evs.length ? [...lez.map(l => ({time:l.start, k:"lezione", c:scol(l.subject), t:l.subject, s:`${l.start}–${l.end}${l.room ? " · " + l.room : ""}${l.teacher ? " · " + l.teacher : ""}`})),
           ...evs.map(e => ({time:e.start || "—", k:kindKey(e.kind), t:e.title, s:[kindName(e.kind), e.subject, e.place].filter(Boolean).join(" · ")}))].sort((a,b) => a.time.localeCompare(b.time)).map(x =>
-          `<div class="li k-${x.k}"><span class="time">${esc(x.time)}</span><span class="dot"></span><div class="body"><div class="t">${esc(x.t)}</div><div class="s">${esc(x.s)}</div></div></div>`).join("")
+          `<div class="li k-${x.k}"${x.c ? ` style="--k:${x.c}"` : ""}><span class="time">${esc(x.time)}</span><span class="dot"></span><div class="body"><div class="t">${esc(x.t)}</div><div class="s">${esc(x.s)}</div></div></div>`).join("")
           : `<p class="muted" style="padding:.6rem 0">Oggi niente lezioni né scadenze.</p>`}</div></div>
       <div class="card"><h3>${ic("plan")}Da studiare oggi</h3>
-        ${order.length ? order.map(s => `<div style="margin-top:.8rem"><div class="row" style="justify-content:space-between"><b>${esc(s)}</b>
+        ${order.length ? order.map(s => `<div style="margin-top:.8rem"><div class="row" style="justify-content:space-between"><b class="sdot" style="--k:${scol(s)}">${esc(s)}</b>
           <span class="chip ${diffDays(S.subjects[s].plan.exam) <= 7 ? "acc" : ""}">${isSup() ? "verifica" : "esame"} ${inDays(diffDays(S.subjects[s].plan.exam))}</span></div>
           ${bySub[s].map(x => taskRow(x, s)).join("")}</div>`).join("") : `<p class="muted" style="padding:.6rem 0">Nessuna attività per oggi.</p>`}
       </div>
@@ -1019,12 +1081,12 @@ function vAgenda() {
     <div class="row"><button class="btn" data-act="addlesson">${ic("plus")}Lezione</button><button class="btn" data-act="addevent">${ic("plus")}Evento</button></div></div>
   <p class="muted small" style="margin:.8rem 0">Clicca una lezione o un evento per vederne i dettagli.</p>
   <div class="week ${hasSat ? "w6" : ""}">${days.map(d => { const s = iso(d);
-    const items = [...lessonsOn(s).map(l => ({t:l.start, h:`<button class="slot k-lezione" data-lesson="${l.id}"><b>${l.start}–${l.end}</b> ${esc(l.subject)}${l.room ? " · " + esc(l.room) : ""}</button>`})),
+    const items = [...lessonsOn(s).map(l => ({t:l.start, h:`<button class="slot k-lezione" style="--k:${scol(l.subject)}" data-lesson="${l.id}"><b>${l.start}–${l.end}</b> ${esc(l.subject)}${l.room ? " · " + esc(l.room) : ""}</button>`})),
       ...eventsOn(s).map(e => ({t:e.start || "00", h:`<button class="slot k-${kindKey(e.kind)}" data-event="${e.id}">${e.start ? `<b>${e.start}${e.end ? "–" + e.end : ""}</b> ` : ""}${esc(e.title)}${e.subject ? " · " + esc(e.subject) : ""}</button>`}))].sort((a,b) => a.t.localeCompare(b.t));
     const st = allTasksOn(s).reduce((a,t) => a + (t.done ? 0 : t.min), 0);
     return `<div class="day ${s === iso(TODAY) ? "today" : ""}"><div class="dh"><b>${d.getDate()}</b><span>${GG[wd(d)]}</span></div>${items.map(x => x.h).join("")}
       ${st ? `<div class="slot studio">studio<br>~${st} min dal piano</div>` : ""}${!items.length && !st ? `<span class="muted small" style="padding:.2rem">Libero</span>` : ""}</div>`; }).join("")}</div>
-  <div class="legend">${[["lezione","Lezione"],["esame", isSup() ? "Verifica / interrogazione" : "Esame"],["scadenza", isSup() ? "Compito" : "Scadenza"],["ricevimento", isSup() ? "Colloquio / evento" : "Ricevimento / seminario"],["studio","Studio dal piano"]].map(([k,l]) =>
+  <div class="legend">${[["lezione","Lezione (colore della materia)"],["esame", isSup() ? "Verifica / interrogazione" : "Esame"],["scadenza", isSup() ? "Compito" : "Scadenza"],["ricevimento", isSup() ? "Colloquio / evento" : "Ricevimento / seminario"],["studio","Studio dal piano"]].map(([k,l]) =>
     `<span class="k-${k}"><span class="dot"></span>${l}</span>`).join("")}</div>
   <div class="row section"><div class="tabs">${[["eventi","Eventi","calendar"],["orario","Orario lezioni","clock"]].map(([k,l,i]) => `<button data-agtab="${k}" aria-pressed="${UI.agTab === k}">${ic(i)}${l}</button>`).join("")}</div>
     ${UI.agTab === "eventi" ? `<label class="row small"><input type="checkbox" id="showPast" ${UI.showPast ? "checked" : ""}>Mostra anche quelli passati</label>` : ""}</div>
@@ -1032,7 +1094,7 @@ function vAgenda() {
       <div class="s">${[kindName(e.kind), e.subject, longDate(e.date), e.start && `${e.start}${e.end ? "–" + e.end : ""}`, e.place, inDays(diffDays(e.date))].filter(Boolean).map(esc).join(" · ")}</div></div>
       <button class="btn ghost sm" data-act="delevent" data-id="${e.id}" aria-label="Elimina ${esc(e.title)}">${ic("trash")}</button></div>`).join("") || `<p class="muted">Nessun evento.</p>`}</div>`
     : `<div class="list">${[0,1,2,3,4,5].map(w => { const ls = S.lessons.filter(l => l.wd === w).sort((a,b) => a.start.localeCompare(b.start)); return ls.length ? `<div class="li"><span class="time" style="width:6.5rem">${cap(GIORNI[w])}</span><div class="body">${ls.map(l =>
-      `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span><b class="num">${l.start}–${l.end}</b> ${esc(l.subject)} <span class="muted small">${esc([l.room, l.teacher].filter(Boolean).join(" · "))}</span></span>
+      `<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span><b class="num">${l.start}–${l.end}</b> <span class="sdot" style="--k:${scol(l.subject)}">${esc(l.subject)}</span> <span class="muted small">${esc([l.room, l.teacher].filter(Boolean).join(" · "))}</span></span>
       <button class="btn ghost sm" data-act="dellesson" data-id="${l.id}" aria-label="Elimina lezione">${ic("trash")}</button></div>`).join("")}</div></div>` : ""; }).join("")}</div>`}</div>`;
 }
 
@@ -1511,5 +1573,5 @@ UI.view = PAGES[location.hash.slice(1)] ? location.hash.slice(1) : "oggi";
 if (STUDY.includes(UI.view)) UI.study = UI.view;
 render();
 </script>
-</body>
-</html>
+
+</body></html>
