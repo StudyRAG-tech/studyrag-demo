@@ -366,6 +366,96 @@ input[type="checkbox"] { accent-color:var(--accent); width:18px; height:18px; }
 .mnode.l0 rect { fill:var(--accent); stroke:var(--accent); }
 .mnode.l0 text { fill:var(--on-accent); }
 .mnode.l0 text, .mnode.l1 text { font-weight:700; }
+
+/* ===================== Movimento 1.1 (prototipo «Movimento StudyRAG», skill charles-ux-animation) =====================
+   ease-out per ciò che appare, ease-in (25% più corto) per ciò che esce, ease-in-out per ciò che si muove sullo schermo.
+   Solo transform, opacity, clip-path e stroke. «Nessuna» spegne tutto tranne il lavoro in corso (.keep). */
+:root { --ease-out:cubic-bezier(.32,.72,0,1); --ease-in:cubic-bezier(.55,0,1,.45); --ease-in-out:cubic-bezier(.77,0,.175,1); }
+html[data-motion="off"] *:not(.keep), html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation:none !important; transition:none !important; }
+html.theme-switching *, html.theme-switching *::before, html.theme-switching *::after { transition:none !important; }
+
+/* pressione: scala 0,96 in 150 ms; hover solo con un puntatore vero; le superfici larghe cambiano solo sfondo */
+.btn, .iconbtn, .play, .seg button, .tabs button { transition:transform 150ms var(--ease-out), background-color 150ms ease, color 150ms ease, border-color 150ms ease; }
+.btn:active:not(:disabled), .iconbtn:active, .play:active, .seg button:active { transform:scale(.96); }
+.btn.primary:hover:not(:active), .card.now .btn:hover:not(:active) { transform:none; }
+.opt:active:not(:disabled), .slot:active, .tabs button:active { filter:brightness(.96); }
+.opt { transition:background-color 150ms ease, border-color 150ms ease; }
+
+/* barre: strato evidenziato ritagliato sulla voce attiva, che scorre in 320 ms */
+.seg { position:relative; isolation:isolate; }
+.seg .hi { position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:inset(0 100% 0 0); transition:clip-path 320ms var(--ease-in-out); }
+.seg button { position:relative; z-index:1; }
+.topbar .seg .hi { background:var(--nav-active); }
+.topbar .seg button[aria-pressed="true"] { background:transparent; }
+.studynav .seg .hi { background:var(--accent-soft); }
+.studynav .seg button[aria-pressed="true"] { background:transparent; box-shadow:none; }
+
+/* cambio sezione */
+#view.nav-out > * { opacity:0; transform:translateX(calc(-8px * var(--dir, 1))); transition:opacity 140ms var(--ease-in), transform 140ms var(--ease-in); pointer-events:none; }
+#view.nav-in > * { animation:navIn 300ms var(--ease-out) both; animation-delay:calc(var(--i, 0) * 40ms); }
+@keyframes navIn { from { opacity:0; transform:translateX(calc(10px * var(--dir, 1))); } to { opacity:1; transform:none; } }
+
+/* barre di avanzamento e cifre */
+.progress i { width:100%; transform-origin:left center; transform:scaleX(0); transition:transform 250ms var(--ease-in-out); }
+.dg { display:inline-block; height:1.15em; line-height:1.15em; overflow:hidden; vertical-align:bottom; }
+.dg .col { display:block; transition:transform 350ms var(--ease-in-out); }
+.dg .col i { display:block; height:1.15em; font-style:normal; }
+.stat .v { line-height:1.15; }
+
+/* spunta */
+.cbox { position:relative; width:22px; height:22px; flex:none; margin-top:.15rem; }
+.cbox input { position:absolute; left:-9px; top:-9px; width:40px; height:40px; margin:0; opacity:0; cursor:pointer; z-index:1; }
+.box { width:22px; height:22px; border-radius:7px; border:2px solid var(--line-2); display:grid; place-items:center; color:var(--surface); transition:background-color 150ms ease, border-color 150ms ease; }
+.cbox input:checked + .box { background:var(--ok); border-color:var(--ok); }
+.cbox input:focus-visible + .box { outline:2px solid var(--accent); outline-offset:2px; }
+.chk { width:15px; height:15px; }
+.chk path { fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:20; stroke-dashoffset:20; }
+.cbox input:checked + .box .chk path { stroke-dashoffset:0; }
+.task.just .box { animation:boxPop 250ms var(--ease-out); }
+.task.just .chk path { animation:draw 250ms var(--ease-out) 60ms both; }
+.task.just .t { animation:dimT 250ms var(--ease-out); }
+@keyframes boxPop { 50% { transform:scale(1.12); } }
+@keyframes draw { from { stroke-dashoffset:20; } to { stroke-dashoffset:0; } }
+@keyframes dimT { from { color:var(--ink); } }
+
+/* quiz */
+.opt.shake { animation:shake 360ms var(--ease-out); }
+@keyframes shake { 0%,100% { transform:none; } 16% { transform:translateX(-10px); } 33% { transform:translateX(10px); } 50% { transform:translateX(-6px); } 66% { transform:translateX(6px); } 83% { transform:translateX(-3px); } }
+.opt.right.pop .l { animation:boxPop 250ms var(--ease-out); }
+.explain.open { animation:rise 250ms var(--ease-out) both; }
+.explain.open.late { animation-delay:300ms; }
+.card.q-enter { animation:qEnter 200ms var(--ease-out) both; }
+@keyframes qEnter { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:none; } }
+@keyframes rise { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+/* flashcard */
+.flash { perspective:800px; }
+.flash .inner { transition:transform 360ms var(--ease-in-out); }
+.flash .face { overflow:hidden; }
+.flash .face::after { content:""; position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; border-radius:inherit; }
+.flash.turning .face::after { animation:shade 360ms var(--ease-in-out); }
+@keyframes shade { 50% { opacity:.3; } }
+.flash.rise { animation:rise 250ms var(--ease-out) both; }
+
+/* cronometro */
+.sessbar.drop { animation:dropIn 240ms var(--ease-out) both; }
+@keyframes dropIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+
+/* finestra: 220 ms in da scala 0,97, 160 ms out */
+.overlay { animation:fadeIn 220ms var(--ease-out) both; }
+.modal { animation:modalIn 220ms var(--ease-out) both; }
+.overlay.closing { animation:fadeOut 160ms var(--ease-in) both; pointer-events:none; }
+.overlay.closing .modal { animation:modalOut 160ms var(--ease-in) both; }
+@keyframes fadeIn { from { opacity:0; } }
+@keyframes fadeOut { to { opacity:0; } }
+@keyframes modalIn { from { opacity:0; transform:scale(.97); } to { opacity:1; transform:none; } }
+@keyframes modalOut { to { opacity:0; transform:scale(.97); } }
+
+/* avviso */
+.toast { transform:none; translate:-50% 0; animation:toastIn 240ms var(--ease-out) both; }
+.toast.out { animation:toastOut 170ms var(--ease-in) both; }
+@keyframes toastIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@keyframes toastOut { from { opacity:1; transform:none; } to { opacity:0; transform:translateY(16px); } }
 </style>
 
 <div class="demo-strip">
@@ -591,7 +681,7 @@ const STORIA_MAP = {titolo:"Il Rinascimento", nodi:[
  {id:"c1",e:"Prospettiva",l:2,n:"Brunelleschi, cupola di Santa Maria del Fiore."},
  {id:"a1",e:"Stampa (1455)",l:2,n:"Gutenberg diffonde libri e idee."},
  {id:"d1",e:"Carlo VIII",l:2,n:"Scende in Italia nel 1494."}],
- rel:[["r","a","nasce da"],["r","b","ha centro a"],["r","c","si esprime con"],["r","d","finisce con"],["b","b1","guidata da"],["b1","b2","difende"],
+ rel:[["r","a","nasce da"],["r","b","ha centro a"],["r","c","si esprime con"],["r","d","finisce con"],["b","b1","guidata da"],["b","b2","aderisce alla"],["b1","b2","difende"],
   ["c","c1","introducono"],["a","a1","si diffonde con"],["d","d1","iniziano con"],["d1","b2","rompe"]]};
 
 const Q = (q, o, a, e) => ({q, o, a, e});
@@ -743,7 +833,7 @@ function seedLog(subs) {
 /* ===================== stato ===================== */
 let S, UI = {view:"oggi", study:"piano", week:0, agTab:"eventi", quizTab:"quiz", qi:0, qState:null, card:0, flipped:false,
   mapTab:"mappa", mapSel:null, mapIdx:0, search:"", carTab:"libretto", gradeTab:"materia", period:"1", job:null, session:null};
-function fresh(level) { const st = level === "sup" ? seedSup() : seedUni(); st.seedDay = iso(TODAY); st.theme = (S && S.theme) || "auto"; return st; }
+function fresh(level) { const st = level === "sup" ? seedSup() : seedUni(); st.seedDay = iso(TODAY); st.theme = (S && S.theme) || "auto"; st.motion = (S && S.motion) || "auto"; return st; }
 function load() {
   try { const raw = localStorage.getItem(STORE_KEY); if (raw) { const st = JSON.parse(raw); if (st.seedDay === iso(TODAY) && st.subjects) return st; } } catch (e) {}
   return fresh("uni");
@@ -754,8 +844,16 @@ const subjNames = () => Object.keys(S.subjects);
 const cur = () => S.subjects[S.subject] || S.subjects[subjNames()[0]];
 const isSup = () => S.level === "sup";
 const scol = s => `var(--subj-${Math.max(0, subjNames().indexOf(s)) % 8})`;   // colore della materia (come ui.subject_class)
+/* Animazioni: «auto» segue il sistema (meno movimento = nessuna), «on» complete, «off» nessuna (come views/motion.py 1.1) */
+const RM = window.matchMedia ? matchMedia("(prefers-reduced-motion: reduce)") : null;
+const motionOn = () => document.documentElement.getAttribute("data-motion") !== "off";
+function applyMotion() {
+  const m = S.motion || "auto";
+  document.documentElement.setAttribute("data-motion", m === "off" || (m === "auto" && RM && RM.matches) ? "off" : "on");
+}
+if (RM && RM.addEventListener) RM.addEventListener("change", applyMotion);
 function applyTheme() {
-  const r = document.documentElement;
+  const r = document.documentElement; applyMotion();
   if (S.theme === "light" || S.theme === "dark") r.setAttribute("data-theme", S.theme); else r.removeAttribute("data-theme");
 }
 
@@ -764,30 +862,77 @@ const STUDY = ["piano","quiz","mappe","biblioteca"];
 const PAGES = {oggi:["Oggi","today"], piano:["Piano","plan"], quiz:["Quiz","quiz"], mappe:["Mappe","map"], biblioteca:["Biblioteca","book"],
   agenda:["Agenda","calendar"], archivio:["Archivio","folder"], carriera:["Carriera","award"], impostazioni:["Impostazioni","gear"]};
 const pageLabel = k => k === "carriera" && isSup() ? "Voti" : PAGES[k][0];
-function go(view) {
+/* ANIMATION STORYBOARD — cambio sezione (ms dal clic)
+ *    0ms   l'indicatore scorre sulla voce nuova (320 ms, ease-in-out); la pagina vecchia esce (140 ms, ease-in, 8 px)
+ *  140ms   la pagina nuova entra dal lato verso cui vai: primi 6 blocchi, 300 ms ease-out, 40 ms l'uno, 10 px
+ * Un altro clic a metà riparte da dove si trova: conta solo l'ultimo (navJob). Alt+numero: cambio senza animazione. */
+const MOTION = { navOut:140, modalOut:160, toastOut:170, roll:350 };
+const ORDER = ["oggi","piano","quiz","mappe","biblioteca","agenda","archivio","carriera","impostazioni"];
+let navJob = 0, navTimer = 0;
+function go(view, instant) {
   if (!PAGES[view]) view = "oggi";
+  const from = UI.view;
   if (STUDY.includes(view)) UI.study = view;
   UI.view = view; UI.mapSel = null;
   if (location.hash.slice(1) !== view) history.replaceState(null, "", "#" + view);
-  render(); window.scrollTo({top:0});
+  const v = document.getElementById("view"); const my = ++navJob; clearTimeout(navTimer);
+  if (instant || from === view || !motionOn() || !v.children.length) { v.classList.remove("nav-out"); render(); window.scrollTo({top:0}); return; }
+  const dir = ORDER.indexOf(view) >= ORDER.indexOf(from) ? 1 : -1;
+  updateNav();
+  v.style.setProperty("--dir", dir); v.classList.remove("nav-in"); v.classList.add("nav-out");
+  navTimer = setTimeout(() => { if (my !== navJob) return; v.classList.remove("nav-out"); UI.navIn = dir; render(); window.scrollTo({top:0}); }, MOTION.navOut);
 }
+/* barre: strato evidenziato ritagliato con clip-path sulla voce attiva (le voci hanno larghezze diverse: si anima solo il ritaglio) */
+function placeHi(bar, animate) {
+  const hi = bar.querySelector(".hi"), on = bar.querySelector('button[aria-pressed="true"]');
+  if (!hi) return;
+  if (!on || !on.offsetWidth) { hi.style.opacity = "0"; return; }
+  const W = bar.clientWidth, H = bar.clientHeight, r = getComputedStyle(on).borderTopLeftRadius;
+  const clip = `inset(${on.offsetTop}px ${W - on.offsetLeft - on.offsetWidth}px ${H - on.offsetTop - on.offsetHeight}px ${on.offsetLeft}px round ${r})`;
+  const still = !animate || !motionOn() || hi.style.opacity === "0" || !hi.dataset.placed;
+  if (still) hi.style.transition = "none";
+  hi.style.opacity = "1"; hi.style.clipPath = clip; hi.dataset.placed = "1";
+  if (still) { void hi.offsetWidth; hi.style.transition = ""; }
+}
+function updateNav() {
+  const mn = document.getElementById("mainnav"), sn = document.getElementById("studynav");
+  const nav = [["oggi","Oggi","today"],["studia","Studia","school"],["agenda","Agenda","calendar"],["archivio","Archivio","folder"],["carriera",pageLabel("carriera"),"award"]];
+  const active = STUDY.includes(UI.view) ? "studia" : UI.view;
+  if (!mn.dataset.built) {
+    mn.innerHTML = `<span class="hi" aria-hidden="true"></span>` + nav.map(([k,l,i]) => `<button data-nav="${k}">${ic(i)}<span>${l}</span></button>`).join("");
+    mn.dataset.built = "1";
+    sn.innerHTML = `<div class="studynav"><nav class="seg" aria-label="Studia"><span class="hi" aria-hidden="true"></span>${STUDY.map(k =>
+      `<button data-go="${k}">${ic(PAGES[k][1])}<span>${PAGES[k][0]}</span></button>`).join("")}</nav></div>`;
+  }
+  nav.forEach(([k,l]) => { const b = mn.querySelector(`[data-nav="${k}"]`);
+    b.dataset.go = k === "studia" ? UI.study : k; b.setAttribute("aria-pressed", active === k); b.querySelector("span").textContent = l; });
+  const wasHidden = sn.hidden; sn.hidden = !STUDY.includes(UI.view);
+  sn.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.go === UI.view));
+  placeHi(mn, true); if (!sn.hidden) placeHi(sn.querySelector(".seg"), !wasHidden);
+}
+const replaceHi = () => { const mn = document.getElementById("mainnav"); if (mn) placeHi(mn, false); const sg = document.querySelector("#studynav .seg"); if (sg && !document.getElementById("studynav").hidden) placeHi(sg, false); };
+window.addEventListener("resize", replaceHi);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(replaceHi);   // i caratteri caricati cambiano le larghezze delle voci
+if (window.ResizeObserver) { const ro = new ResizeObserver(replaceHi); requestAnimationFrame(() => { const t = document.getElementById("topbar"); if (t) ro.observe(t); }); }
 window.addEventListener("hashchange", () => { const v = location.hash.slice(1); if (v && v !== UI.view && PAGES[v]) go(v); });
 
 function renderTop() {
   const nav = [["oggi","Oggi","today"],["studia","Studia","school"],["agenda","Agenda","calendar"],["archivio","Archivio","folder"],["carriera",pageLabel("carriera"),"award"]];
   const active = STUDY.includes(UI.view) ? "studia" : UI.view;
   const j = UI.job;
-  document.getElementById("topbar").innerHTML = `
-    <button class="iconbtn" data-act="palette" title="Cerca e vai (Ctrl+K)" aria-label="Cerca e vai">${ic("search")}</button>
-    <div class="brand"><div class="mark">S</div><div class="name">StudyRAG</div></div>
-    <nav class="seg" aria-label="Sezioni">${nav.map(([k,l,i]) => `<button data-go="${k === "studia" ? UI.study : k}" aria-pressed="${active === k}">${ic(i)}<span>${l}</span></button>`).join("")}</nav>
-    <div class="spacer"></div>
-    ${j ? `<div class="jobs" role="status">${ic("spark")}<span>${esc(j.label)}</span><span class="bar"><i id="jobbar" style="width:${j.p}%"></i></span></div>` : ""}
-    <select class="subj" id="subjPick" aria-label="Materia attiva" title="Materia attiva: piano, quiz, mappe e archivio sono separati per materia">
-      ${subjNames().map(s => `<option ${s === S.subject ? "selected" : ""}>${esc(s)}</option>`).join("")}</select>
-    <button class="iconbtn ${UI.view === "impostazioni" ? "on" : ""}" data-go="impostazioni" title="Impostazioni" aria-label="Impostazioni">${ic("gear")}</button>`;
-  document.getElementById("studynav").innerHTML = STUDY.includes(UI.view) ? `<div class="studynav"><nav class="seg" aria-label="Studia">${STUDY.map(k =>
-    `<button data-go="${k}" aria-pressed="${UI.view === k}">${ic(PAGES[k][1])}<span>${PAGES[k][0]}</span></button>`).join("")}</nav></div>` : "";
+  const tb = document.getElementById("topbar");
+  if (!tb.dataset.built) {          // la barra resta la stessa: cambiano solo i pezzi, cosi' l'indicatore puo' scorrere
+    tb.innerHTML = `<button class="iconbtn" data-act="palette" title="Cerca e vai (Ctrl+K)" aria-label="Cerca e vai">${ic("search")}</button>
+      <div class="brand"><div class="mark">S</div><div class="name">StudyRAG</div></div>
+      <nav class="seg" id="mainnav" aria-label="Sezioni"></nav><div class="spacer"></div><span id="jobsSlot"></span>
+      <select class="subj" id="subjPick" aria-label="Materia attiva" title="Materia attiva: piano, quiz, mappe e archivio sono separati per materia"></select>
+      <button class="iconbtn" id="gearBtn" data-go="impostazioni" title="Impostazioni" aria-label="Impostazioni">${ic("gear")}</button>`;
+    tb.dataset.built = "1";
+  }
+  document.getElementById("jobsSlot").innerHTML = j ? `<div class="jobs" role="status">${ic("spark")}<span>${esc(j.label)}</span><span class="bar keep"><i class="keep" id="jobbar" style="width:${j.p}%"></i></span></div>` : "";
+  document.getElementById("subjPick").innerHTML = subjNames().map(s => `<option ${s === S.subject ? "selected" : ""}>${esc(s)}</option>`).join("");
+  document.getElementById("gearBtn").classList.toggle("on", UI.view === "impostazioni");
+  updateNav();
   document.getElementById("levelSeg").innerHTML = [["uni","Università"],["sup","Superiori"]].map(([k,l]) => `<button data-level="${k}" aria-pressed="${S.level === k}">${l}</button>`).join("");
 }
 function hero(eyebrow, title, sub, meta="") {
@@ -835,7 +980,8 @@ function vOggi() {
     <div class="eyebrow">Adesso</div>
     ${nextTask ? `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">${esc(nextTask.subject)} — ${esc(nextTask.title)}</h2>
       <p class="muted">${nextTask.kind === "ripasso" ? "Ripasso" : "Studio"} · ~${nextTask.min} min dal piano di studio${dueCards(nextTask.subject).length ? ` · poi ${dueCards(nextTask.subject).length} flashcard` : ""}</p>`
-      : `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">Per oggi hai finito.</h2><p class="muted">Tutte le attività del piano sono spuntate. Puoi ripassare le flashcard o riposarti.</p>`}
+      : (tasks.length ? `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">Per oggi hai finito.</h2><p class="muted">Tutte le attività del piano sono spuntate. Puoi ripassare le flashcard o riposarti.</p>`
+      : `<h2 style="font-size:1.75rem;margin:.25rem 0 .2rem">Oggi è giorno libero.</h2><p class="muted">Il piano non mette studio di ${GIORNI[wd(TODAY)]}. Se vuoi, ripassa le flashcard in scadenza.</p>`)}
     ${ex ? `<div class="row" style="margin:1rem 0 1.1rem;gap:1rem"><div class="progress" style="flex:0 1 420px;min-width:120px"><i style="width:${ready}%"></i></div>
       <span class="muted small">Prossimo esame: ${esc(ex.subject || ex.title)} ${inDays(diffDays(ex.date))} · pronto al ${ready}%</span></div>` : ""}
     <div class="row">${nextTask ? `<button class="btn primary" data-act="session" data-sub="${esc(nextTask.subject)}" data-task="${nextTask.id}">${ic("play")}Avvia sessione</button>` : ""}
@@ -868,7 +1014,7 @@ function vOggi() {
 }
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 function taskRow(t, subject, withPlay=true) {
-  return `<label class="task ${t.done ? "done" : ""}"><input type="checkbox" data-task="${t.id}" data-sub="${esc(subject)}" ${t.done ? "checked" : ""}>
+  return `<label class="task ${t.done ? "done" : ""}"><span class="cbox"><input type="checkbox" data-task="${t.id}" data-sub="${esc(subject)}" ${t.done ? "checked" : ""}><span class="box" aria-hidden="true"><svg class="chk" viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span></span>
     <div class="body"><div class="t">${esc(t.title)}</div><div class="s">${t.kind === "ripasso" ? "Ripasso" : "Studio"} · ${esc(t.loc)} · ~${t.min} min</div></div>
     ${withPlay && !t.done ? `<button class="play" data-act="session" data-sub="${esc(subject)}" data-task="${t.id}" title="Avvia una sessione su questa attività" aria-label="Avvia sessione">${ic("play")}</button>` : ""}</label>`;
 }
@@ -964,7 +1110,7 @@ function flashBlock(due) {
   return `<div class="row small" style="justify-content:space-between;margin-bottom:.6rem"><span>${due.length} ${due.length === 1 ? "carta" : "carte"} da ripassare</span><span class="muted">Scatola ${c.box + 1} di 5 · clicca la carta per girarla</span></div>
     <div class="flash ${UI.flipped ? "flipped" : ""}" data-act="flip" role="button" tabindex="0" aria-label="Gira la carta"><div class="inner">
       <div class="face"><h2>${esc(c.front)}</h2></div><div class="face back"><p>${esc(c.back)}</p></div></div></div>
-    <div class="row" style="justify-content:center;margin-top:1rem">${UI.flipped ? `<button class="btn" data-act="cardno" data-id="${c.id}">Non la sapevo</button><button class="btn primary" data-act="cardyes" data-id="${c.id}">${ic("check")}La sapevo</button>`
+    <div class="row" id="flashActs" style="justify-content:center;margin-top:1rem">${UI.flipped ? `<button class="btn" data-act="cardno" data-id="${c.id}">Non la sapevo</button><button class="btn primary" data-act="cardyes" data-id="${c.id}">${ic("check")}La sapevo</button>`
       : `<button class="btn" data-act="flip">Mostra la risposta</button>`}</div>`;
 }
 function simBlock(d) {
@@ -995,6 +1141,11 @@ function layoutMap(m) {
   const kids = {}, parent = {};
   for (const [a, b] of m.rel) if (!(b in parent) && by[a] && by[b] && by[a].l < by[b].l) { parent[b] = a; (kids[a] ||= []).push(b); }
   const root = m.nodi.find(n => n.l === 0).id;
+  for (const n of m.nodi) if (n.id !== root && !(n.id in parent)) {        // nessun genitore di livello piu' basso
+    const near = m.rel.find(r => r[1] === n.id && by[r[0]] && r[0] in parent) || m.rel.find(r => r[0] === n.id && by[r[1]] && r[1] in parent);
+    const p = near ? (near[1] === n.id ? parent[near[0]] : parent[near[1]]) : root;
+    parent[n.id] = p; (kids[p] ||= []).push(n.id);
+  }
   const W = t => Math.round(t.length * 8.1 + 34), H = 40, gapY = 18;
   const colW = {}; m.nodi.forEach(n => colW[n.l] = Math.max(colW[n.l] || 0, W(n.e)));
   const xs = {0:20}; const maxL = Math.max(...m.nodi.map(n => n.l));
@@ -1173,7 +1324,7 @@ function vCarriera() {
       <div class="card"><h3>${ic("spark")}E se il prossimo esame…</h3>
         <div class="grid g2" style="margin-top:.8rem"><label class="field"><span>CFU</span><input class="input" type="number" id="simCfu" min="1" max="30" value="${simC}"></label>
         <label class="field"><span>Voto: <b id="simVOut" style="color:var(--accent)">${simV}</b></span><input type="range" id="simVoto" min="18" max="30" value="${simV}"></label></div>
-        <p style="margin-top:.8rem" id="simTxt">Media <b>${nf(nw)}</b> (${nw >= c.w ? "+" : "−"}${nf(Math.abs(nw - c.w))}) · base <b>${nf(nw * 110 / 30, 1)}</b>/110</p></div>
+        <p style="margin-top:.8rem" id="simTxt">Media <b class="num" id="simAvg">${nf(nw)}</b> (<span id="simDelta">${nw >= c.w ? "+" : "−"}${nf(Math.abs(nw - c.w))}</span>) · base <b class="num" id="simBase">${nf(nw * 110 / 30, 1)}</b>/110</p></div>
       <div class="card"><h3>${ic("trend")}Andamento della media</h3>${lineChart(pts.map(p => p.v), pts.map(p => p.n), 24, 30)}</div>
     </div></div>`}`;
 }
@@ -1277,6 +1428,9 @@ function vImpostazioni() {
     <div class="card"><h3>${ic("sun")}Aspetto</h3><div class="field" style="margin-top:.8rem"><span>Tema</span>
       <div class="tabs">${[["light","Giorno"],["dark","Notte"],["auto","Automatico"]].map(([k,l]) => `<button data-theme-pick="${k}" aria-pressed="${S.theme === k}">${l}</button>`).join("")}</div></div>
       <p class="muted small" style="margin-top:.8rem">Automatico segue il tema del computer.</p>
+      <div class="field" style="margin-top:1rem"><span>Animazioni</span>
+      <div class="tabs">${[["auto","Automatiche"],["on","Complete"],["off","Nessuna"]].map(([k,l]) => `<button data-motion-pick="${k}" aria-pressed="${(S.motion || "auto") === k}">${l}</button>`).join("")}</div></div>
+      <p class="muted small" style="margin-top:.6rem">Automatiche: spente se il computer chiede meno movimento.</p>
       <h3 style="margin-top:1.4rem">${ic("refresh")}Demo</h3><p class="lead">Cancella le modifiche e riparti con i dati di esempio.</p>
       <button class="btn danger" data-act="reset" style="margin-top:.7rem">${ic("refresh")}Ricomincia la demo</button></div>
   </div>
@@ -1289,9 +1443,58 @@ function vImpostazioni() {
 const VIEWS = {oggi:vOggi, piano:vPiano, quiz:vQuiz, mappe:vMappe, biblioteca:vBiblioteca, agenda:vAgenda, archivio:vArchivio, carriera:vCarriera, impostazioni:vImpostazioni};
 function render() {
   if (!S.subjects[S.subject]) S.subject = subjNames()[0];
+  const snap = snapshot();
   applyTheme(); renderTop(); renderSession();
-  document.getElementById("view").innerHTML = VIEWS[UI.view]();
+  const v = document.getElementById("view");
+  v.classList.remove("nav-in");
+  v.innerHTML = VIEWS[UI.view]();
   document.title = `${pageLabel(UI.view)} · StudyRAG Demo`;
+  afterRender(snap);
+}
+/* ---------- movimento dentro le pagine ---------- */
+function snapshot() {
+  const stats = {}; document.querySelectorAll("#view .stat").forEach(el => { const k = el.querySelector(".k"), v = el.querySelector(".v"); if (k && v) stats[k.textContent.trim()] = v.textContent; });
+  return {view:UI.view, stats, bars:[...document.querySelectorAll("#view .progress i")].map(barValue)};
+}
+function barValue(el) { const m = /scaleX\(([\d.]+)\)/.exec(el.style.transform); return m ? +m[1] : parseFloat(el.style.width) / 100; }
+function afterRender(snap) {
+  const v = document.getElementById("view"), same = snap.view === UI.view && !UI.navIn, on = motionOn();
+  v.querySelectorAll(".progress i").forEach((el, i) => {          // barre: crescono dal valore di prima
+    const target = Math.max(0, Math.min(1, parseFloat(el.style.width) / 100 || 0)); el.style.width = "100%";
+    const prev = snap.bars[i];
+    if (on && same && prev !== undefined && !isNaN(prev) && Math.abs(prev - target) > .001) {
+      el.style.transition = "none"; el.style.transform = `scaleX(${prev})`; void el.offsetWidth; el.style.transition = ""; }
+    el.style.transform = `scaleX(${target})`;
+  });
+  if (same) v.querySelectorAll(".stat").forEach(el => { const k = el.querySelector(".k"), val = el.querySelector(".v");   // cifre che rotolano
+    if (!k || !val || val.children.length) return; const old = snap.stats[k.textContent.trim()];
+    if (old !== undefined && old !== val.textContent) { const now = val.textContent; val.textContent = old; rollText(val, now); } });
+  if (UI.navIn) { v.style.setProperty("--dir", UI.navIn); [...v.children].forEach((c, i) => c.style.setProperty("--i", Math.min(i, 5)));
+    void v.offsetWidth; if (on) v.classList.add("nav-in"); UI.navIn = 0; }
+  const fx = UI.fx; UI.fx = null;                                   // un gesto, un effetto
+  if (!fx || !on) return;
+  if (fx.kind === "check") { const inp = v.querySelector(`input[data-task="${fx.id}"]`); if (inp) inp.closest(".task").classList.add("just"); }
+  if (fx.kind === "answer") { const w = v.querySelector(".opt.wrong"); if (w) { w.classList.add("shake"); v.querySelector(".explain")?.classList.add("late"); }
+    v.querySelector(".opt.right")?.classList.add("pop"); v.querySelector(".explain")?.classList.add("open"); }
+  if (fx.kind === "qnext") v.querySelector(".qhead")?.closest(".card")?.classList.add("q-enter");
+  if (fx.kind === "card") v.querySelector(".flash")?.classList.add("rise");
+  if (fx.kind === "sess") document.querySelector(".sessbar")?.classList.add("drop");
+}
+function rollText(el, next) {
+  const prev = el.textContent;
+  if (!motionOn() || prev === next || prev.length !== next.length) { el.textContent = next; return; }
+  const n = s => +s.replace(/\D/g, "") || 0, up = n(next) >= n(prev);
+  const col = "0123456789".repeat(2).split("").map(d => `<i>${d}</i>`).join("");
+  let html = "";
+  for (let i = 0; i < next.length; i++) {
+    const a = prev[i], b = next[i];
+    if (a === b || !/\d/.test(a) || !/\d/.test(b)) { html += esc(b); continue; }
+    const start = up ? +a : +a + 10, end = up ? (+b > +a ? +b : +b + 10) : (+b < +a ? +b + 10 : +b);
+    html += `<span class="dg" aria-hidden="true"><span class="col" style="transform:translateY(${-start * 1.15}em)" data-end="${end}">${col}</span></span>`;
+  }
+  el.setAttribute("aria-label", next); el.innerHTML = html; void el.offsetWidth;
+  el.querySelectorAll(".col").forEach(c => { c.style.transition = ""; c.style.transform = `translateY(${-c.dataset.end * 1.15}em)`; });
+  clearTimeout(el._roll); el._roll = setTimeout(() => { if (el.isConnected) { el.textContent = next; el.removeAttribute("aria-label"); } }, MOTION.roll + 60);
 }
 function renderSession() {
   const s = UI.session, el = document.getElementById("sessbar");
@@ -1310,14 +1513,27 @@ setInterval(() => {
 }, 1000);
 
 /* ===================== modali e messaggi ===================== */
+let modalTok = 0;
 function modal(title, body, opts={}) {
+  ++modalTok;
   document.getElementById("modalRoot").innerHTML = `<div class="overlay" data-act="mclose-bg"><div class="modal ${opts.wide ? "wide" : ""}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
     <header><h2>${title}</h2><button class="iconbtn" data-act="mclose" aria-label="Chiudi">${ic("x")}</button></header>${body}</div></div>`;
   const f = document.querySelector("#modalRoot input, #modalRoot select, #modalRoot textarea"); if (f) f.focus();
 }
-const closeModal = () => document.getElementById("modalRoot").innerHTML = "";
+function closeModal() {
+  const r = document.getElementById("modalRoot"), ov = r.firstElementChild;
+  if (!ov) return;
+  if (!motionOn()) { r.innerHTML = ""; return; }
+  if (ov.classList.contains("closing")) return;
+  ov.classList.add("closing"); ov.setAttribute("inert", "");
+  const tok = ++modalTok; setTimeout(() => { if (tok === modalTok && r.firstElementChild === ov) r.innerHTML = ""; }, MOTION.modalOut);
+}
 let toastT;
-function toast(msg) { const r = document.getElementById("toastRoot"); r.innerHTML = `<div class="toast" role="status">${msg}</div>`; clearTimeout(toastT); toastT = setTimeout(() => r.innerHTML = "", 3200); }
+function toast(msg) {
+  const r = document.getElementById("toastRoot"); r.innerHTML = `<div class="toast" role="status">${msg}</div>`; clearTimeout(toastT);
+  toastT = setTimeout(() => { const t = r.firstElementChild; if (!t) return; if (!motionOn()) { r.innerHTML = ""; return; }
+    t.classList.add("out"); toastT = setTimeout(() => { if (r.firstElementChild === t) r.innerHTML = ""; }, MOTION.toastOut); }, 3200);
+}
 function fakeJob(label, ms, done) {
   if (UI.job) return toast("C'è già un lavoro dell'AI in corso.");
   UI.job = {label, p:4}; render();
@@ -1369,7 +1585,7 @@ function findTask(sub, id) { const p = S.subjects[sub]?.plan; if (!p) return nul
 function startSession(subject, taskId) {
   const t = taskId ? findTask(subject, taskId) : null;
   UI.session = {subject, taskId, title:t ? t.title : "Studio libero", start:Date.now()};
-  render(); toast("Sessione avviata: il cronometro resta in cima a ogni sezione.");
+  UI.fx = {kind:"sess"}; render(); toast("Sessione avviata: il cronometro resta in cima a ogni sezione.");
 }
 function makePlan(subject, examIso, minutes) {
   const d = S.subjects[subject]; const book = S.books.find(b => b.subject === subject);
@@ -1407,7 +1623,7 @@ function eventModal() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-act],[data-go],[data-level],[data-qtab],[data-mtab],[data-agtab],[data-ctab],[data-gtab],[data-period],[data-theme-pick],[data-node],[data-lesson],[data-event],[data-pal]");
+  const t = e.target.closest("[data-act],[data-go],[data-level],[data-qtab],[data-mtab],[data-agtab],[data-ctab],[data-gtab],[data-period],[data-theme-pick],[data-motion-pick],[data-node],[data-lesson],[data-event],[data-pal]");
   if (!t) return;
   if (t.dataset.go) { if (t.dataset.sub && S.subjects[t.dataset.sub]) S.subject = t.dataset.sub; return go(t.dataset.go); }
   if (t.dataset.level) { if (S.level !== t.dataset.level) { S = fresh(t.dataset.level); save(); UI.qState = null; UI.sim = null; UI.mapIdx = 0; UI.qi = 0; go(UI.view); toast(t.dataset.level === "sup" ? "Profilo superiori: Marco, 3ª liceo scientifico." : "Profilo università: Sofia, Ingegneria energetica."); } return; }
@@ -1417,7 +1633,9 @@ document.addEventListener("click", e => {
   if (t.dataset.ctab) { UI.carTab = t.dataset.ctab; return render(); }
   if (t.dataset.gtab) { UI.gradeTab = t.dataset.gtab; return render(); }
   if (t.dataset.period) { UI.period = t.dataset.period; return render(); }
-  if (t.dataset.themePick) { S.theme = t.dataset.themePick; save(); return render(); }
+  if (t.dataset.themePick) { const root = document.documentElement; root.classList.add("theme-switching");
+    S.theme = t.dataset.themePick; save(); render(); requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching"))); return; }
+  if (t.dataset.motionPick) { S.motion = t.dataset.motionPick; save(); return render(); }
   if (t.dataset.node) { UI.mapSel = UI.mapSel === t.dataset.node ? null : t.dataset.node; return render(); }
   if (t.dataset.pal !== undefined) { const it = palItems[+t.dataset.pal]; closeModal(); return it && it.fn(); }
   if (t.dataset.lesson) { const l = S.lessons.find(x => x.id === t.dataset.lesson); return modal(esc(l.subject), `<p><b>${cap(GIORNI[l.wd])}</b>, ${l.start}–${l.end}</p><p class="muted">${esc([l.room, l.teacher].filter(Boolean).join(" · ") || "Nessuna aula indicata")}</p>
@@ -1447,18 +1665,24 @@ document.addEventListener("click", e => {
     case "delplanok": d.plan = null; closeModal(); save(); render(); break;
     case "planfor": S.subject = t.dataset.sub; go("piano"); break;
     case "genquiz": genFromPool(document.getElementById("genKind").value); break;
-    case "qans": { const st = UI.qState, q = d.quizzes[UI.qi].qs[st.i]; st.pick = +t.dataset.j; if (st.pick === q.a) st.score++; render(); break; }
-    case "qnext": { const st = UI.qState, qz = d.quizzes[UI.qi]; st.i++; st.pick = null; if (st.i >= qz.qs.length && st.score > qz.best) { qz.best = st.score; st.newBest = true; save(); } render(); break; }
+    case "qans": { const st = UI.qState, q = d.quizzes[UI.qi].qs[st.i]; st.pick = +t.dataset.j; if (st.pick === q.a) st.score++; UI.fx = {kind:"answer"}; render(); break; }
+    case "qnext": { const st = UI.qState, qz = d.quizzes[UI.qi]; st.i++; st.pick = null; if (st.i >= qz.qs.length && st.score > qz.best) { qz.best = st.score; st.newBest = true; save(); } UI.fx = {kind:"qnext"}; render(); break; }
     case "qrestart": UI.qState = null; render(); break;
-    case "flip": UI.flipped = !UI.flipped; render(); break;
+    case "flip": { UI.flipped = !UI.flipped; const f = document.querySelector(".flash"); const acts = document.getElementById("flashActs");
+      if (!f || !acts) { render(); break; }
+      f.classList.toggle("flipped", UI.flipped);
+      if (motionOn()) { f.classList.remove("turning"); void f.offsetWidth; f.classList.add("turning"); }
+      const c = dueCards(S.subject)[0];
+      acts.innerHTML = UI.flipped ? `<button class="btn" data-act="cardno" data-id="${c.id}">Non la sapevo</button><button class="btn primary" data-act="cardyes" data-id="${c.id}">${ic("check")}La sapevo</button>` : `<button class="btn" data-act="flip">Mostra la risposta</button>`;
+      break; }
     case "cardyes": case "cardno": { const c = d.cards.find(x => x.id === t.dataset.id);
       if (a === "cardyes") { c.box = Math.min(4, c.box + 1); c.due = off([1,2,4,7,14][c.box]); } else { c.box = 0; c.due = off(1); }
-      UI.flipped = false; save(); render(); break; }
+      UI.flipped = false; UI.fx = {kind:"card"}; save(); render(); break; }
     case "cardsall": d.cards.forEach(c => c.due = off(0)); save(); render(); break;
     case "simstart": { const all = [...d.quizzes.flatMap(q => q.qs)].sort(() => Math.random() - .5);
       UI.sim = {sub:S.subject, qs:all, i:0, pick:null, score:0, end:Date.now() + +document.getElementById("simMin").value * 60000}; render(); break; }
-    case "simans": { const q = UI.sim.qs[UI.sim.i]; UI.sim.pick = +t.dataset.j; if (UI.sim.pick === q.a) UI.sim.score++; render(); break; }
-    case "simnext": UI.sim.i++; UI.sim.pick = null; render(); break;
+    case "simans": { const q = UI.sim.qs[UI.sim.i]; UI.sim.pick = +t.dataset.j; if (UI.sim.pick === q.a) UI.sim.score++; UI.fx = {kind:"answer"}; render(); break; }
+    case "simnext": UI.sim.i++; UI.sim.pick = null; UI.fx = {kind:"qnext"}; render(); break;
     case "simreset": UI.sim = null; render(); break;
     case "genmap": { const pool = MAPPOOL[S.subject];
       if (!d.docs.length) return toast("Carica prima un documento in Archivio.");
@@ -1499,7 +1723,7 @@ function selectText(id) { const el = document.getElementById(id); if (!el) retur
 
 document.addEventListener("change", e => {
   const t = e.target;
-  if (t.matches("input[type=checkbox][data-task]")) { const tk = findTask(t.dataset.sub, t.dataset.task); if (tk) { tk.done = t.checked; save(); render(); if (t.checked) toast("Attività completata."); } return; }
+  if (t.matches("input[type=checkbox][data-task]")) { const tk = findTask(t.dataset.sub, t.dataset.task); if (tk) { tk.done = t.checked; if (t.checked) UI.fx = {kind:"check", id:tk.id}; save(); render(); if (t.checked) toast("Attività completata."); } return; }
   switch (t.id) {
     case "subjPick": S.subject = t.value; UI.qi = 0; UI.mapIdx = 0; UI.qState = null; UI.mapSel = null; save(); render(); break;
     case "allDays": UI.allDays = t.checked; render(); break;
@@ -1522,7 +1746,8 @@ document.addEventListener("input", e => {
   if (t.id === "simCfu" || t.id === "simVoto") { UI.simCfu = Math.max(1, +document.getElementById("simCfu").value || 1); UI.simVoto = +document.getElementById("simVoto").value;
     const c = careerStats(), nw = (c.sum + UI.simVoto * UI.simCfu) / (c.cfuV + UI.simCfu);
     document.getElementById("simVOut").textContent = UI.simVoto;
-    document.getElementById("simTxt").innerHTML = `Media <b>${nf(nw)}</b> (${nw >= c.w ? "+" : "−"}${nf(Math.abs(nw - c.w))}) · base <b>${nf(nw * 110 / 30, 1)}</b>/110`; }
+    rollText(document.getElementById("simAvg"), nf(nw)); rollText(document.getElementById("simBase"), nf(nw * 110 / 30, 1));
+    document.getElementById("simDelta").textContent = `${nw >= c.w ? "+" : "−"}${nf(Math.abs(nw - c.w))}`; }
 });
 document.addEventListener("submit", e => {
   e.preventDefault();
@@ -1563,7 +1788,7 @@ document.addEventListener("keydown", e => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); return; }
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
   if (e.altKey && !typing && /^[1-9]$/.test(e.key)) {
-    e.preventDefault(); go(["oggi", UI.study, "agenda", "archivio", "carriera", "piano", "quiz", "mappe", "biblioteca"][+e.key - 1]);
+    e.preventDefault(); go(["oggi", UI.study, "agenda", "archivio", "carriera", "piano", "quiz", "mappe", "biblioteca"][+e.key - 1], true);
   }
   if ((e.key === "Enter" || e.key === " ") && document.activeElement.matches && document.activeElement.matches("[data-node],.flash")) { e.preventDefault(); document.activeElement.click(); }
 });
